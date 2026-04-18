@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Knowledge Graph Explorer</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800;900&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#ee7ebb",
+                        "error-dim": "#a70138",
+                        "on-tertiary-fixed": "#360023",
+                        "on-secondary": "#f7f0ff",
+                        "primary": "#4b3fe2",
+                        "outline": "#757778",
+                        "surface-variant": "#dadddf",
+                        "tertiary-container": "#fe8bc9",
+                        "primary-fixed-dim": "#8985ff",
+                        "on-primary": "#f5f1ff",
+                        "on-primary-container": "#15007d",
+                        "secondary-dim": "#573ca4",
+                        "surface-bright": "#f5f6f7",
+                        "surface-container-low": "#eff1f2",
+                        "inverse-primary": "#8681ff",
+                        "on-secondary-fixed": "#3b1a88",
+                        "on-tertiary-fixed-variant": "#6d104d",
+                        "tertiary-fixed": "#fe8bc9",
+                        "inverse-on-surface": "#9b9d9e",
+                        "tertiary-dim": "#892a64",
+                        "on-primary-fixed": "#000000",
+                        "primary-fixed": "#9895ff",
+                        "surface-container-high": "#e0e3e4",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error-container": "#510017",
+                        "on-secondary-container": "#4f329c",
+                        "on-error": "#ffefef",
+                        "surface-tint": "#4b3fe2",
+                        "secondary-fixed-dim": "#cbbaff",
+                        "on-surface-variant": "#595c5d",
+                        "primary-dim": "#3f2fd6",
+                        "on-primary-fixed-variant": "#1c0098",
+                        "secondary-container": "#d8caff",
+                        "error": "#b41340",
+                        "on-tertiary": "#ffeff4",
+                        "secondary": "#6348b1",
+                        "surface-dim": "#d1d5d7",
+                        "error-container": "#f74b6d",
+                        "inverse-surface": "#0c0f10",
+                        "on-surface": "#2c2f30",
+                        "on-tertiary-container": "#610243",
+                        "surface-container-highest": "#dadddf",
+                        "background": "#f5f6f7",
+                        "secondary-fixed": "#d8caff",
+                        "surface": "#f5f6f7",
+                        "on-background": "#2c2f30",
+                        "primary-container": "#9895ff",
+                        "tertiary": "#983771",
+                        "surface-container": "#e6e8ea",
+                        "outline-variant": "#abadae",
+                        "on-secondary-fixed-variant": "#583da6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {},
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans", "sans-serif"],
+                        "body": ["Manrope", "sans-serif"],
+                        "label": ["Manrope", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(245, 246, 247, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .node-pulse {
+            position: relative;
+        }
+        .node-pulse::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 9999px;
+            background: rgba(75, 63, 226, 0.2);
+            z-index: -1;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body h-screen w-full overflow-hidden flex flex-col relative">
+<!-- Top Navigation / Search -->
+<header class="fixed top-0 left-0 w-full z-40 p-6 pointer-events-none flex justify-between items-start">
+<div class="pointer-events-auto w-full max-w-md">
+<div class="bg-surface-container-lowest rounded-full shadow-[0_8px_30px_rgba(44,47,48,0.06)] flex items-center p-3 relative">
+<span class="material-symbols-outlined text-on-surface-variant ml-2 mr-3" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-on-surface font-body w-full placeholder:text-on-surface-variant outline-none" placeholder="Find in Graph" type="text"/>
+</div>
+</div>
+<!-- Legend -->
+<div class="pointer-events-auto hidden md:flex flex-col bg-surface-container-lowest/80 backdrop-blur-md rounded-xl p-4 shadow-[0_8px_30px_rgba(44,47,48,0.06)] ml-4">
+<h3 class="font-headline font-bold text-sm text-on-surface mb-3">Legend</h3>
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[10px] text-on-primary">location_on</span>
+</div>
+<span class="text-xs font-label text-on-surface-variant">Spot</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[10px] text-on-secondary">tag</span>
+</div>
+<span class="text-xs font-label text-on-surface-variant">Tag</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined text-[10px] text-on-tertiary">map</span>
+</div>
+<span class="text-xs font-label text-on-surface-variant">Location</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Graph Canvas Area -->
+<main class="flex-grow relative bg-surface-container-low overflow-hidden cursor-move">
+<!-- Connecting Lines (SVG) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arrowhead" markerheight="7" markerwidth="10" orient="auto" refx="9" refy="3.5">
+<polygon fill="#abadae" opacity="0.5" points="0 0, 10 3.5, 0 7"></polygon>
+</marker>
+</defs>
+<!-- Center to Top Right (Retro Cafe) -->
+<path d="M 50% 50% Q 60% 40% 70% 30%" fill="none" marker-end="url(#arrowhead)" opacity="0.6" stroke="#abadae" stroke-dasharray="4 4" stroke-width="2"></path>
+<text dy="-5" fill="#595c5d" font-family="Manrope" font-size="10" font-weight="600" text-anchor="middle" x="60%" y="40%">Similarity: Style</text>
+<!-- Center to Bottom Left (Kyoto) -->
+<path d="M 50% 50% Q 40% 60% 30% 75%" fill="none" opacity="0.4" stroke="#abadae" stroke-width="2"></path>
+<text dy="-5" fill="#595c5d" font-family="Manrope" font-size="10" font-weight="600" text-anchor="middle" x="40%" y="62%">Location</text>
+<!-- Center to Top Left (Specialty Coffee) -->
+<path d="M 50% 50% Q 35% 45% 20% 35%" fill="none" opacity="0.5" stroke="#abadae" stroke-width="1.5"></path>
+<!-- Center to Bottom Right (New Spot) -->
+<path d="M 50% 50% Q 65% 65% 80% 70%" fill="none" opacity="0.5" stroke="#abadae" stroke-dasharray="2 6" stroke-width="2"></path>
+<text dy="-5" fill="#595c5d" font-family="Manrope" font-size="10" font-weight="600" text-anchor="middle" x="65%" y="60%">Vibe</text>
+</svg>
+<!-- Nodes -->
+<!-- Central Node: The Roastery -->
+<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 flex flex-col items-center">
+<div class="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-primary-dim text-on-primary flex items-center justify-center shadow-[0_12px_40px_rgba(75,63,226,0.3)] node-pulse cursor-pointer hover:scale-105 transition-transform duration-300">
+<img alt="Specialty coffee roastery interior" class="w-full h-full object-cover rounded-full mix-blend-overlay opacity-50" data-alt="close up of roasted coffee beans in a modern roastery with warm lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9tJ_oesP5_fUbVyfGmUbryydAroGMyj8fxIoGem-hR9K2gICVJhCUGcnISbHIgDHz68iZiOb8jDfxHD9RzxxetRqzrO1jzxOxNaiNlE6KXWw_3vCTJXj07dXhuiusBaTT6Vpe5iV_6Gkroczo6reTHs6xYziM3RuflRTW8tB0pgrFs_38D3XpIMelss3Zy22qoZtSAhBZ9WqBjy1CD1ay-GdMeSDmwnJ7fS_47a6PPZY8x-XyF6k3QiC5oPeV-6gsAsbt6nyHObbx"/>
+<span class="material-symbols-outlined absolute text-3xl font-light" data-icon="storefront">storefront</span>
+</div>
+<div class="mt-3 bg-surface-container-lowest px-4 py-1.5 rounded-full shadow-sm">
+<span class="font-headline font-bold text-sm text-on-surface">The Roastery</span>
+</div>
+</div>
+<!-- Node: Retro Cafe -->
+<div class="absolute top-[30%] left-[70%] transform -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col items-center">
+<div class="w-16 h-16 rounded-full bg-surface-container-lowest border-2 border-primary/20 text-primary flex items-center justify-center shadow-sm cursor-pointer hover:scale-105 transition-transform duration-300">
+<img alt="Retro style cafe" class="w-full h-full object-cover rounded-full opacity-80" data-alt="interior of a retro 70s style cafe with orange accents and vintage furniture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZbBtNxpAhtbuSdyXm9I-s3GWa6VyyiifL5rrAx5UBBZpYtsW9YcXbkQW-eK7g9eAuk33gumyFLPIwA8uYxJPQ5TInfYYSwiYkZf8Z1Z-F_xroDLJ5zL0rpeolvnTa_UabvinhnOan_h4lGDyGfly_SWkl0KtfFPm1_aoCOBbOs8d6XiBBIrbvmVrP14kM2seFSq1RyhUtJQULadw9p7n_HsSFW9yyuFyRQm2e5ZZQToI0eJSoHgnf_Y9ZYsH1dVnbTbGMhhFPJQqs"/>
+</div>
+<div class="mt-2 bg-surface/80 backdrop-blur px-3 py-1 rounded-full">
+<span class="font-label font-semibold text-xs text-on-surface">Retro Cafe</span>
+</div>
+</div>
+<!-- Node: Kyoto -->
+<div class="absolute top-[75%] left-[30%] transform -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col items-center">
+<div class="w-14 h-14 rounded-full bg-tertiary text-on-tertiary flex items-center justify-center shadow-md cursor-pointer hover:scale-105 transition-transform duration-300">
+<span class="material-symbols-outlined text-2xl" data-icon="map">map</span>
+</div>
+<div class="mt-2 bg-surface/80 backdrop-blur px-3 py-1 rounded-full">
+<span class="font-label font-semibold text-xs text-on-surface">Kyoto</span>
+</div>
+</div>
+<!-- Node: Specialty Coffee (Tag) -->
+<div class="absolute top-[35%] left-[20%] transform -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col items-center">
+<div class="w-12 h-12 rounded-full bg-secondary text-on-secondary flex items-center justify-center shadow-sm cursor-pointer hover:scale-105 transition-transform duration-300">
+<span class="material-symbols-outlined text-xl" data-icon="tag">tag</span>
+</div>
+<div class="mt-2 bg-surface/80 backdrop-blur px-3 py-1 rounded-full">
+<span class="font-label font-semibold text-xs text-on-surface">Specialty Coffee</span>
+</div>
+</div>
+<!-- Node: Minimalist Vibes -->
+<div class="absolute top-[70%] left-[80%] transform -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col items-center">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center shadow-sm cursor-pointer hover:scale-105 transition-transform duration-300">
+<span class="material-symbols-outlined text-xl" data-icon="mood">mood</span>
+</div>
+<div class="mt-2 bg-surface/80 backdrop-blur px-3 py-1 rounded-full">
+<span class="font-label font-semibold text-xs text-on-surface">Minimalist</span>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Shell (Mobile Only for visual demonstration, hidden on md) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-6 pb-8 pt-4 bg-[#eff1f2] border-none shadow-[0_-8px_30px_rgba(44,47,48,0.06)] rounded-t-[1.5rem]">
+<!-- Home (Inactive) -->
+<a class="flex flex-col items-center justify-center text-[#2c2f30]/50 px-5 py-2.5 hover:opacity-90 transition-opacity" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-['Plus_Jakarta_Sans'] font-bold text-[10px] uppercase tracking-[0.1em]">Home</span>
+</a>
+<!-- Add (Inactive) -->
+<a class="flex flex-col items-center justify-center text-[#2c2f30]/50 px-5 py-2.5 hover:opacity-90 transition-opacity" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="add_circle">add_circle</span>
+<span class="font-['Plus_Jakarta_Sans'] font-bold text-[10px] uppercase tracking-[0.1em]">Add</span>
+</a>
+<!-- Graph (Active) -->
+<a class="flex flex-col items-center justify-center bg-gradient-to-br from-[#4b3fe2] to-[#3f2fd6] text-white rounded-[1.5rem] px-5 py-2.5 active:scale-[0.96] transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="hub">hub</span>
+<span class="font-['Plus_Jakarta_Sans'] font-bold text-[10px] uppercase tracking-[0.1em]">Graph</span>
+</a>
+<!-- Profile (Inactive) -->
+<a class="flex flex-col items-center justify-center text-[#2c2f30]/50 px-5 py-2.5 hover:opacity-90 transition-opacity" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-['Plus_Jakarta_Sans'] font-bold text-[10px] uppercase tracking-[0.1em]">Profile</span>
+</a>
+</nav>
+<!-- Desktop Side Nav Spacer (if needed for larger screens to show hierarchy) -->
+<div class="hidden md:flex fixed top-1/2 left-6 transform -translate-y-1/2 flex-col gap-6 bg-surface-container-lowest p-4 rounded-full shadow-[0_8px_30px_rgba(44,47,48,0.06)] z-40">
+<a class="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+</a>
+<a class="bg-gradient-to-br from-primary to-primary-dim text-on-primary shadow-sm flex items-center justify-center w-10 h-10 rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="hub">hub</span>
+</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</a>
+</div>
+</body></html>

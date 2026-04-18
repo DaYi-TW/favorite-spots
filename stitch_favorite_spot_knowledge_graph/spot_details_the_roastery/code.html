@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Spot Details - The Roastery</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#ee7ebb",
+                        "error-dim": "#a70138",
+                        "on-tertiary-fixed": "#360023",
+                        "on-secondary": "#f7f0ff",
+                        "primary": "#4b3fe2",
+                        "outline": "#757778",
+                        "surface-variant": "#dadddf",
+                        "tertiary-container": "#fe8bc9",
+                        "primary-fixed-dim": "#8985ff",
+                        "on-primary": "#f5f1ff",
+                        "on-primary-container": "#15007d",
+                        "secondary-dim": "#573ca4",
+                        "surface-bright": "#f5f6f7",
+                        "surface-container-low": "#eff1f2",
+                        "inverse-primary": "#8681ff",
+                        "on-secondary-fixed": "#3b1a88",
+                        "on-tertiary-fixed-variant": "#6d104d",
+                        "tertiary-fixed": "#fe8bc9",
+                        "inverse-on-surface": "#9b9d9e",
+                        "tertiary-dim": "#892a64",
+                        "on-primary-fixed": "#000000",
+                        "primary-fixed": "#9895ff",
+                        "surface-container-high": "#e0e3e4",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error-container": "#510017",
+                        "on-secondary-container": "#4f329c",
+                        "on-error": "#ffefef",
+                        "surface-tint": "#4b3fe2",
+                        "secondary-fixed-dim": "#cbbaff",
+                        "on-surface-variant": "#595c5d",
+                        "primary-dim": "#3f2fd6",
+                        "on-primary-fixed-variant": "#1c0098",
+                        "secondary-container": "#d8caff",
+                        "error": "#b41340",
+                        "on-tertiary": "#ffeff4",
+                        "secondary": "#6348b1",
+                        "surface-dim": "#d1d5d7",
+                        "error-container": "#f74b6d",
+                        "inverse-surface": "#0c0f10",
+                        "on-surface": "#2c2f30",
+                        "on-tertiary-container": "#610243",
+                        "surface-container-highest": "#dadddf",
+                        "background": "#f5f6f7",
+                        "secondary-fixed": "#d8caff",
+                        "surface": "#f5f6f7",
+                        "on-background": "#2c2f30",
+                        "primary-container": "#9895ff",
+                        "tertiary": "#983771",
+                        "surface-container": "#e6e8ea",
+                        "outline-variant": "#abadae",
+                        "on-secondary-fixed-variant": "#583da6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {},
+                    "fontFamily": {
+                        "headline": [
+                            "Plus Jakarta Sans"
+                        ],
+                        "body": [
+                            "Manrope"
+                        ],
+                        "label": [
+                            "Manrope"
+                        ]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #f5f6f7;
+            color: #2c2f30;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .bg-hero {
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="antialiased min-h-screen bg-surface">
+<!-- Top App Bar - Fixed -->
+<header class="flex justify-between items-center w-full px-6 py-4 sticky top-0 z-40 bg-[#f5f6f7] dark:bg-[#2c2f30] text-[#4b3fe2] dark:text-[#9895ff] font-['Plus_Jakarta_Sans'] font-black text-2xl tracking-tighter">
+<button class="w-10 h-10 rounded-full flex items-center justify-center bg-surface-container-low text-on-surface hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-xl">arrow_back</span>
+</button>
+<div class="font-['Plus_Jakarta_Sans'] font-black text-2xl tracking-tighter text-[#2c2f30] dark:text-[#f5f6f7]">Curator</div>
+<button class="w-10 h-10 rounded-full flex items-center justify-center bg-surface-container-low text-on-surface hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-xl">more_vert</span>
+</button>
+</header>
+<main class="pb-24">
+<!-- Hero Section -->
+<section class="w-full h-80 relative rounded-b-xl overflow-hidden mb-6 shadow-sm">
+<div class="absolute inset-0 bg-hero" data-alt="interior of a modern industrial coffee shop with concrete walls, warm string lights, and wooden tables with people sitting" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCgEyeBHrN4KTWMZAu8lH6vxtFJBIb9VjTGzm_uj-IzezJORXC8A4ePqEbhSwThmM9hUOMF7PnS3St1F39hI9P5b502EDSoM7pmNJjW7OE08ZEwN0JEeTRkwOhNcoIDPbtVpGhP5rTAo0lGmUFZqm0eeSPssnh-SrHr47wdGafxykM35Ev4QcI8ncgYT3HJ32LuVGe06J-3YVKMdZYw7YDzuqNvFrR8xnTcmemUE150A686PgUweee22Ag3MtubOmcg0KGk4sHgnTBZ');">
+<!-- Overlay gradient -->
+<div class="absolute inset-0 bg-gradient-to-t from-surface via-surface/20 to-transparent"></div>
+</div>
+<div class="absolute bottom-6 left-6 right-6 z-10 flex flex-col justify-end">
+<div class="flex items-center gap-3 mb-2">
+<span class="px-3 py-1 bg-surface-container-lowest/80 backdrop-blur-md rounded-full text-xs font-bold text-primary tracking-wide">CAFE</span>
+<div class="flex items-center gap-1 bg-surface-container-lowest/80 backdrop-blur-md rounded-full px-3 py-1">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold text-on-surface">4.8</span>
+</div>
+</div>
+<h1 class="text-4xl md:text-5xl font-extrabold text-on-surface leading-tight tracking-tight drop-shadow-sm">The Roastery</h1>
+<p class="text-sm font-medium text-on-surface-variant mt-1 flex items-center gap-1 drop-shadow-sm">
+<span class="material-symbols-outlined text-sm">location_on</span>
+                    124 Industrial Ave, Eastside
+                </p>
+</div>
+</section>
+<!-- Actions Row -->
+<section class="px-6 mb-8 flex justify-between gap-4">
+<button class="flex-1 py-3 bg-gradient-to-br from-primary to-primary-dim text-on-primary rounded-full font-bold text-sm flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(75,63,226,0.2)] hover:scale-[0.98] transition-transform">
+<span class="material-symbols-outlined text-lg">map</span>
+                View on Maps
+            </button>
+<div class="flex gap-3">
+<button class="w-12 h-12 rounded-full bg-surface-container-low flex items-center justify-center text-primary hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-xl">edit_note</span>
+</button>
+<button class="w-12 h-12 rounded-full bg-surface-container-low flex items-center justify-center text-primary hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-xl">share</span>
+</button>
+</div>
+</section>
+<!-- Status Toggle -->
+<section class="px-6 mb-10">
+<div class="bg-surface-container-low rounded-xl p-1 flex relative">
+<div class="w-1/2 absolute left-1 top-1 bottom-1 bg-surface-container-lowest rounded-lg shadow-sm z-0 transition-transform duration-300"></div>
+<button class="flex-1 py-2 text-sm font-bold text-primary z-10 relative">Want to Go</button>
+<button class="flex-1 py-2 text-sm font-medium text-on-surface-variant z-10 relative">Visited</button>
+</div>
+</section>
+<!-- AI Insights Bento Grid -->
+<section class="px-6 mb-10">
+<h2 class="text-xl font-bold mb-4 text-on-surface tracking-tight flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">auto_awesome</span>
+                AI Insights
+            </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Summary Card -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-[0_2px_10px_rgba(44,47,48,0.02)]">
+<p class="text-sm text-on-surface leading-relaxed">
+                        A quintessential third-wave coffee experience set in a restored warehouse. Known for their meticulously sourced single-origin pour-overs and a surprisingly quiet atmosphere perfect for deep work or intimate conversations.
+                    </p>
+</div>
+<!-- Tags Card -->
+<div class="bg-surface-container-low rounded-xl p-5 flex flex-wrap gap-2 content-start">
+<span class="px-3 py-1.5 bg-surface-container-lowest rounded-full text-xs font-semibold text-primary">Industrial</span>
+<span class="px-3 py-1.5 bg-surface-container-lowest rounded-full text-xs font-semibold text-primary">Minimalist</span>
+<span class="px-3 py-1.5 bg-surface-container-lowest rounded-full text-xs font-semibold text-primary">Specialty Coffee</span>
+<span class="px-3 py-1.5 bg-surface-container-lowest rounded-full text-xs font-semibold text-primary">Quiet</span>
+<span class="px-3 py-1.5 bg-surface-container-lowest rounded-full text-xs font-semibold text-primary">Good for Work</span>
+</div>
+</div>
+</section>
+<!-- Connections Graph Snippet -->
+<section class="px-6 mb-10">
+<h2 class="text-xl font-bold mb-4 text-on-surface tracking-tight flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">hub</span>
+                Connections
+            </h2>
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_2px_10px_rgba(44,47,48,0.02)] relative overflow-hidden">
+<!-- Decorative background elements -->
+<div class="absolute -right-10 -top-10 w-32 h-32 bg-primary/5 rounded-full blur-2xl"></div>
+<div class="flex flex-col items-center justify-center space-y-6">
+<!-- Target Node -->
+<div class="relative">
+<div class="absolute inset-0 bg-primary-container opacity-20 rounded-full scale-150 animate-pulse"></div>
+<div class="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-primary-dim shadow-lg flex items-center justify-center relative z-10 border-4 border-surface-container-lowest">
+<span class="material-symbols-outlined text-on-primary" style="font-variation-settings: 'FILL' 1;">local_cafe</span>
+</div>
+</div>
+<!-- Connecting Lines & Nodes -->
+<div class="flex justify-between w-full relative pt-4">
+<!-- Path 1 -->
+<div class="flex flex-col items-center">
+<div class="h-10 w-0.5 bg-surface-container-high absolute top-[-24px] left-[20%] -rotate-[30deg]"></div>
+<div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center border-2 border-surface-container-lowest relative z-10">
+<span class="text-xs font-bold text-on-surface-variant">Bk</span>
+</div>
+<span class="text-[10px] font-semibold text-on-surface-variant mt-2 uppercase tracking-wider">Bakery Row</span>
+<span class="text-[9px] text-primary mt-0.5 bg-primary/10 px-2 py-0.5 rounded-full">Location</span>
+</div>
+<!-- Path 2 -->
+<div class="flex flex-col items-center">
+<div class="h-10 w-0.5 bg-surface-container-high absolute top-[-24px] right-[20%] rotate-[30deg]"></div>
+<div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center border-2 border-surface-container-lowest relative z-10">
+<span class="text-xs font-bold text-on-surface-variant">St</span>
+</div>
+<span class="text-[10px] font-semibold text-on-surface-variant mt-2 uppercase tracking-wider">Studio 9</span>
+<span class="text-[9px] text-primary mt-0.5 bg-primary/10 px-2 py-0.5 rounded-full">Style</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Shell - Hidden logically per specs for detail views, but left structure commented out or removed as per instructions: "Automatic Suppression: You MUST exclude the navigation shell if the page intent is: ... Any sub-page featuring a "Close" or "Back" action" -->
+</body></html>

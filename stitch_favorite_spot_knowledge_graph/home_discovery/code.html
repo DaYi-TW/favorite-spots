@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Curator - Home Feed</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&amp;family=Manrope:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#ee7ebb",
+                    "error-dim": "#a70138",
+                    "on-tertiary-fixed": "#360023",
+                    "on-secondary": "#f7f0ff",
+                    "primary": "#4b3fe2",
+                    "outline": "#757778",
+                    "surface-variant": "#dadddf",
+                    "tertiary-container": "#fe8bc9",
+                    "primary-fixed-dim": "#8985ff",
+                    "on-primary": "#f5f1ff",
+                    "on-primary-container": "#15007d",
+                    "secondary-dim": "#573ca4",
+                    "surface-bright": "#f5f6f7",
+                    "surface-container-low": "#eff1f2",
+                    "inverse-primary": "#8681ff",
+                    "on-secondary-fixed": "#3b1a88",
+                    "on-tertiary-fixed-variant": "#6d104d",
+                    "tertiary-fixed": "#fe8bc9",
+                    "inverse-on-surface": "#9b9d9e",
+                    "tertiary-dim": "#892a64",
+                    "on-primary-fixed": "#000000",
+                    "primary-fixed": "#9895ff",
+                    "surface-container-high": "#e0e3e4",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error-container": "#510017",
+                    "on-secondary-container": "#4f329c",
+                    "on-error": "#ffefef",
+                    "surface-tint": "#4b3fe2",
+                    "secondary-fixed-dim": "#cbbaff",
+                    "on-surface-variant": "#595c5d",
+                    "primary-dim": "#3f2fd6",
+                    "on-primary-fixed-variant": "#1c0098",
+                    "secondary-container": "#d8caff",
+                    "error": "#b41340",
+                    "on-tertiary": "#ffeff4",
+                    "secondary": "#6348b1",
+                    "surface-dim": "#d1d5d7",
+                    "error-container": "#f74b6d",
+                    "inverse-surface": "#0c0f10",
+                    "on-surface": "#2c2f30",
+                    "on-tertiary-container": "#610243",
+                    "surface-container-highest": "#dadddf",
+                    "background": "#f5f6f7",
+                    "secondary-fixed": "#d8caff",
+                    "surface": "#f5f6f7",
+                    "on-background": "#2c2f30",
+                    "primary-container": "#9895ff",
+                    "tertiary": "#983771",
+                    "surface-container": "#e6e8ea",
+                    "outline-variant": "#abadae",
+                    "on-secondary-fixed-variant": "#583da6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {},
+            "fontFamily": {
+                    "headline": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "body": [
+                            "Manrope"
+                    ],
+                    "label": [
+                            "Manrope"
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; background-color: #f5f6f7; }
+        h1, h2, h3, h4, h5, h6, .font-headline { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .material-symbols-outlined.filled { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        
+        /* Staggered Grid/Masonry CSS */
+        .masonry {
+            column-count: 2;
+            column-gap: 1rem;
+        }
+        @media (min-width: 768px) { .masonry { column-count: 3; } }
+        @media (min-width: 1024px) { .masonry { column-count: 4; } }
+        .masonry-item {
+            break-inside: avoid;
+            margin-bottom: 1rem;
+        }
+        
+        /* Hide scrollbar for filter chips */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface pb-24">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-6 py-4 sticky top-0 z-40 bg-[#f5f6f7] dark:bg-[#2c2f30] transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="close up portrait of a young woman with natural light, soft focus background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAP2KokPA6nPVpX4AcrKC6jyx3on_nMz3dN-XKfCTM3_sacs0mA1LawZFOeIMTj9vxb9pqK5qd0FEC_ISpC8YxLCpnI1LbPEkVIc138pV3GP4Wg0DKh2EvhM5_ShF27yg0Kux8cx2w1DqcVZL7dpdLRLzH_pwTNG1_Bb9KCpcw9JXLd5UP94J1ZApcDSfAzoCZbaKTNrKxk_GhaM72BhiuNFp-us0AaeSGtC4zumZi6OLDWnKiaxl-PETxDJz8d8XP8Tbb4ue13D8tu"/>
+</div>
+</div>
+<h1 class="font-['Plus_Jakarta_Sans'] font-black text-2xl tracking-tighter text-[#2c2f30] dark:text-[#f5f6f7]">Curator</h1>
+<button class="w-10 h-10 flex items-center justify-center text-[#2c2f30] dark:text-[#f5f6f7] hover:bg-[#eff1f2] dark:hover:bg-[#1a1c1d] rounded-full transition-colors active:scale-[0.96] duration-200">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="px-4 md:px-8 max-w-7xl mx-auto">
+<!-- Filter Chips (Horizontal Scroll) -->
+<section class="py-4 mb-2">
+<div class="flex gap-3 overflow-x-auto no-scrollbar pb-2 px-2">
+<button class="whitespace-nowrap px-6 py-2.5 rounded-full bg-primary text-on-primary font-bold text-sm shadow-[0_4px_14px_rgba(75,63,226,0.25)] active:scale-[0.96] transition-transform">
+                    All
+                </button>
+<button class="whitespace-nowrap px-6 py-2.5 rounded-full bg-surface-container-low text-on-surface font-semibold text-sm hover:bg-surface-container-high transition-colors active:scale-[0.96]">
+                    Restaurant
+                </button>
+<button class="whitespace-nowrap px-6 py-2.5 rounded-full bg-surface-container-low text-on-surface font-semibold text-sm hover:bg-surface-container-high transition-colors active:scale-[0.96]">
+                    Cafe
+                </button>
+<button class="whitespace-nowrap px-6 py-2.5 rounded-full bg-surface-container-low text-on-surface font-semibold text-sm hover:bg-surface-container-high transition-colors active:scale-[0.96]">
+                    Dessert
+                </button>
+<button class="whitespace-nowrap px-6 py-2.5 rounded-full bg-surface-container-low text-on-surface font-semibold text-sm hover:bg-surface-container-high transition-colors active:scale-[0.96]">
+                    Attraction
+                </button>
+</div>
+</section>
+<!-- Pinterest-style Grid Feed -->
+<section class="masonry pt-2">
+<!-- Spot Card 1 (Tall) -->
+<article class="masonry-item bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm relative group cursor-pointer">
+<div class="relative w-full aspect-[3/4]">
+<img alt="Retro Cafe" class="w-full h-full object-cover" data-alt="interior of a cozy retro cafe with warm lighting, wooden furniture, and espresso machine in background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLQI91Jq9DvE3XpBUujZ47G5FvHZiaIj7SlYsatzguW3rqddNiSO_34w17QW46u6E14QiW-g7TTHLSlDGdwspvakOsSmRIBtJmO18f_NpC8DoOylUZybkxVZivQUDscFAr56k3s28EdY8iw6j5nXy4JCwo4szHnrt-5PEa3_gpQ4boTbwDW3LggEIAQtXBzsLzYxJ_KamRT_2kMz205ODq1kuBAUJX6LPx9VhMQwRbfIyOY-MPU0edslmUKwx4r7VBPj2kSkSkzFcP"/>
+<div class="absolute top-3 right-3 bg-surface-container-lowest/80 backdrop-blur-md rounded-full px-3 py-1 flex items-center gap-1">
+<span class="material-symbols-outlined filled text-primary text-sm" data-icon="bookmark">bookmark</span>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-1">
+<h2 class="font-headline font-bold text-lg leading-tight text-on-surface">Retro Cafe</h2>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant text-sm font-body">
+<span class="font-semibold text-primary">Cafe</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant opacity-50"></span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span> Tainan</span>
+</div>
+</div>
+</article>
+<!-- Spot Card 2 (Square-ish) -->
+<article class="masonry-item bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm relative group cursor-pointer">
+<div class="relative w-full aspect-square">
+<img alt="Neon Nights Diner" class="w-full h-full object-cover" data-alt="exterior of a modern diner at night illuminated by bright pink and blue neon signs, wet street reflection" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfjzBvsYTiW75bKInDuRtw0rzkbOppE1k36B2BqJqaGVyEku_E2dzsZOpOg9xVuR-JIlilzNRAK-SEWTpU7XoFqMEsaCLHR7JppaV_gYbcl4RxReaNLGl9ZShTvNqn-luHZ2YKQUFhRHsG_sxbIJy-mDlhA6lh1Mdao-S7nYGvZBotJZd1hx9rnHqdhm9Tu2KgFFeDN7f2f0IDr8geEJ8lud70bPbvt4tvvH-G97FTB7DvRzOgw9OkZpLR7bKaaXcYC34GV0VECCas"/>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-1">
+<h2 class="font-headline font-bold text-lg leading-tight text-on-surface">Neon Nights</h2>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant text-sm font-body">
+<span class="font-semibold text-primary">Restaurant</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant opacity-50"></span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span> Taipei</span>
+</div>
+</div>
+</article>
+<!-- Spot Card 3 (Landscape-ish) -->
+<article class="masonry-item bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm relative group cursor-pointer">
+<div class="relative w-full aspect-[4/3]">
+<img alt="Zen Garden" class="w-full h-full object-cover" data-alt="peaceful japanese zen garden with raked sand, smooth stones, and lush green maple trees softly lit" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAroKqCAWxw_8-w1oj6sR7m8UxNLOUxQdDGRaU52Xj0Dkxfm6y2_8UqbF7elcTpoqOOIxr51nJHvJINpuFQWip26hYyo5iRkbQFgxidn5ZP1efJswEermO5DoRL7H50gLb4cIt01begJHlEWxKqdAxhGWWBEUJfuCKQMSkoRjOXmgfCF-XvUaep3huH1Icw4V3B6qElTax0jhMuTjUkMQG9Yt85bc7myys1mtR1Yhl3UTMgsmIxP4W5M1wesLA6PCw_4WbG2Y36Qj27"/>
+<div class="absolute top-3 right-3 bg-surface-container-lowest/80 backdrop-blur-md rounded-full px-3 py-1 flex items-center gap-1">
+<span class="material-symbols-outlined filled text-primary text-sm" data-icon="bookmark">bookmark</span>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-1">
+<h2 class="font-headline font-bold text-lg leading-tight text-on-surface">Serene Sands</h2>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant text-sm font-body">
+<span class="font-semibold text-primary">Attraction</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant opacity-50"></span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span> Kyoto</span>
+</div>
+</div>
+</article>
+<!-- Spot Card 4 (Tall) -->
+<article class="masonry-item bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm relative group cursor-pointer">
+<div class="relative w-full aspect-[3/4]">
+<img alt="Sweet Tooth" class="w-full h-full object-cover" data-alt="close up of an artisanal multi layered pastry dessert with fresh berries and powdered sugar on a ceramic plate" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5kkxk4HCK_YDIyvdiMvmdzAjhHWrH-0voNpzOw4KNIxoN7Zkku-Q0XvfIHORKTy0wfvrR7NTUVf2u-kwQYdBSWU2NwR2N_g3dKNkcMVSfsjsWCnAXSRo4dGmT0ADpLjAEJ3Y6HE76poPRlb4Lj5Tq72uWMOVUtuzYsi3YDlYng7V21knEsIzpSJZSwzPCCEUhQ_UW2VbNTMINnN4Ubk8MU1BM1SZXQLOozkA6PDIkOeMhtKLWjFyKK_z_DvzeRqPTtMFwqOTXh03_"/>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-1">
+<h2 class="font-headline font-bold text-lg leading-tight text-on-surface">La Petite Sucrerie</h2>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant text-sm font-body">
+<span class="font-semibold text-primary">Dessert</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant opacity-50"></span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span> Paris</span>
+</div>
+</div>
+</article>
+<!-- Spot Card 5 (Square) -->
+<article class="masonry-item bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm relative group cursor-pointer">
+<div class="relative w-full aspect-square">
+<img alt="Industrial Brew" class="w-full h-full object-cover" data-alt="modern minimalist coffee shop interior with exposed brick, industrial lighting, and a pour over coffee station" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTQRNCT3YOqWGHxbWTvUF3ZX-NMfpAYeN_QbCZA6Ny3TnvTFagrhSD_-hUpkX-ntIfVhGv7mEJoukHPMDiuKZtz4acN9LBpTuKSidx13JY3vSKCkVroD8ylX6buknoDfugSwMwQLQKnLu-AnQhf47EqvAtfAvAFvRYW5Z6mfHlr4dPR7KjbwziCwMgFTfbu98oy0LMP_DGn6lGA6sbmkf0Eu9l9V6PrawaOEHoVP4yGOMg4CICbk2ey8v0ZH3D9_vVJbb-BCixgdrI"/>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-1">
+<h2 class="font-headline font-bold text-lg leading-tight text-on-surface">The Roastery</h2>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant text-sm font-body">
+<span class="font-semibold text-primary">Cafe</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant opacity-50"></span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span> Brooklyn</span>
+</div>
+</div>
+</article>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-6 pb-8 pt-4 bg-[#f5f6f7] dark:bg-[#2c2f30] rounded-t-[1.5rem] shadow-[0_-8px_30px_rgba(44,47,48,0.06)]">
+<div class="flex flex-col items-center justify-center bg-gradient-to-br from-[#4b3fe2] to-[#3f2fd6] text-white rounded-[1.5rem] px-5 py-2.5 active:scale-[0.96] transition-transform duration-200">
+<span class="material-symbols-outlined mb-1" data-icon="home" data-weight="fill" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-['Plus_Jakarta_Sans'] font-bold text-[10px] uppercase tracking-[0.1em]">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#2c2f30]/50 dark:text-[#f5f6f7]/50 px-5 py-2.5 hover:opacity-90 transition-opacity active:scale-[0.96] duration-200">
+<span class="material-symbols-outlined mb-1" data-icon="add_circle">add_circle</span>
+<span class="font-['Plus_Jakarta_Sans'] font-bold text-[10px] uppercase tracking-[0.1em]">Add</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#2c2f30]/50 dark:text-[#f5f6f7]/50 px-5 py-2.5 hover:opacity-90 transition-opacity active:scale-[0.96] duration-200">
+<span class="material-symbols-outlined mb-1" data-icon="hub">hub</span>
+<span class="font-['Plus_Jakarta_Sans'] font-bold text-[10px] uppercase tracking-[0.1em]">Graph</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#2c2f30]/50 dark:text-[#f5f6f7]/50 px-5 py-2.5 hover:opacity-90 transition-opacity active:scale-[0.96] duration-200">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-['Plus_Jakarta_Sans'] font-bold text-[10px] uppercase tracking-[0.1em]">Profile</span>
+</div>
+</nav>
+</body></html>
