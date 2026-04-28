@@ -4,123 +4,154 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Favorite Spots Knowledge Graph** (brand name: **Curator** / **Vivid Atlas**) is a mobile-first web app where users paste any URL (Instagram, TikTok, YouTube, Google Maps, blogs) and the system auto-parses spot details via AI, stores them, and visualizes relationships as an interactive knowledge graph.
+**Favorite Spots Knowledge Graph** (brand name: **Curator** / **Vivid Atlas**) — a mobile-first web app where users paste any URL (Instagram, TikTok, Google Maps, etc.) and the system auto-parses spot details via AI, stores them in PostgreSQL + Neo4j, and visualizes relationships as an interactive knowledge graph.
 
-Core flow: User pastes URL → Web scraping (Jsoup) + AI extraction (Claude API) → Stored in PostgreSQL + Neo4j → Displayed as card wall or knowledge graph.
+Core flow: User pastes URL → Jsoup (OG tags) + Claude API fallback → PostgreSQL + Neo4j sync → card wall or knowledge graph.
 
-## Repository Contents
+## Development Commands
 
-This repo is currently in the **design/planning phase**. No implementation code exists yet. The repo contains:
-
-- `favorite-spots-design-proposal.md` — Original Chinese-language design proposal
-- `stitch_favorite_spot_knowledge_graph/` — UI mockups, PRD, and design system
-  - `home_discovery/code.html` — Home feed (Pinterest card wall)
-  - `add_new_spot/code.html` — Link-paste + parse flow
-  - `spot_details_the_roastery/code.html` — Spot detail page
-  - `knowledge_graph_explorer/code.html` — Interactive graph visualization
-  - `vivid_atlas/DESIGN.md` — Full design system spec ("The Intelligent Curator")
-  - `project_proposal_favorite_spots_knowledge_graph.md` — English project proposal
-
-## Planned Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Backend | Spring Boot 3.x, Java 21 |
-| Primary DB | PostgreSQL + Spring Data JPA |
-| Graph DB | Neo4j + Spring Data Neo4j |
-| Cache | Redis (parsed link results) |
-| Auth | Spring Security + JWT |
-| Web Scraping | Jsoup |
-| AI Extraction | Claude API |
-| Frontend | React + Next.js (mobile-first) |
-| Deployment | Docker + Docker Compose |
-
-## Architecture
-
-```
-React/Next.js (mobile-first)
-        ↓ HTTPS
-Spring Boot API Server
-  ├── Auth API (JWT)
-  ├── Spot API (CRUD)
-  ├── Graph API (Neo4j queries)
-  └── Link Parser Service
-        ├── Web Scraper (Jsoup) — Open Graph meta tags, title, image, address
-        └── AI Extractor (Claude API) — name, category, region, style tags
-        ↓
-  ┌─────────┬──────────┬─────────┐
-PostgreSQL   Neo4j     Redis
-(users,      (graph    (parse
- spots)      rels)     cache)
+### Full stack (Docker)
+```bash
+docker compose up -d                                          # start all 5 services
+docker compose build backend && docker compose up -d backend  # rebuild backend only
+docker compose build frontend && docker compose up -d frontend # rebuild frontend only
+docker compose logs -f backend                                # tail backend logs
 ```
 
-## Data Models
+### Backend (local)
+```bash
+cd backend
+mvn spring-boot:run           # requires local postgres/redis/neo4j
+mvn package -DskipTests       # build JAR
+mvn test                      # run all tests
+mvn test -Dtest=ClassName     # run single test class
+```
 
-**PostgreSQL entities:** `User`, `Spot`, `SpotSource`, `Tag`, `SpotTag`
+### Frontend (local)
+```bash
+cd frontend
+npm install && npm run dev    # dev server on :3000
+npm run build                 # production build
+npm run test:ci               # jest (no watch)
+```
 
-**Spot fields:** name, address, city, category (`RESTAURANT/CAFE/DESSERT/ATTRACTION/HOTEL/BAR`), status (`WANT_TO_GO/VISITED`), cover_image_url, personal_rating (1–5), personal_note, is_public
+## Services
 
-**Neo4j nodes:** `(:Spot)`, `(:Tag)`, `(:City)`
+| Service | Port | Notes |
+|---------|------|-------|
+| postgres | 5432 | primary store, Flyway-managed schema |
+| redis | 6379 | link parse cache, key = `parse:<SHA-256(url)>`, 24h TTL |
+| neo4j | 7474 / 7687 | graph store; browser at localhost:7474 (neo4j / favoritespot) |
+| backend | 8080 | Spring Boot 3.4.4 / Java 21 |
+| frontend | 3000 | Next.js 14 App Router |
 
-**Neo4j relationships:**
-- `(:Spot)-[:HAS_TAG]->(:Tag)`
-- `(:Spot)-[:LOCATED_IN]->(:City)`
-- `(:Spot)-[:SAME_CATEGORY]->(:Spot)`
-- `(:Spot)-[:SIMILAR_STYLE {sharedTags}]->(:Spot)`
-- `(:Spot)-[:FROM_SAME_SOURCE {sourceUrl}]->(:Spot)`
+## Backend Architecture
 
-## API Endpoints
+**Package root**: `com.favoritespot`
 
-- `POST /api/auth/register` / `POST /api/auth/login` — JWT auth
-- `POST /api/parse` — parse a URL, return preview (result cached in Redis)
-- `GET/POST /api/spots` — list with filters / create spot
-- `GET/PUT/DELETE /api/spots/{id}` — spot CRUD
-- `PATCH /api/spots/{id}/status` — toggle WANT_TO_GO / VISITED
-- `GET /api/graph/spot/{id}` — spot's knowledge graph (max 2 hops)
-- `GET /api/graph/related/{id}` — related spot recommendations
-- `GET /api/public/{username}` — public profile page
+| Package | Contents |
+|---------|----------|
+| `auth/` | JWT HttpOnly cookie auth; `AuthService` implements `UserDetailsService`; userId (UUID) stored as Spring Security username |
+| `spot/` | CRUD; `SpotService` owns dual-store wiring — calls `GraphSyncService` after every PostgreSQL save/delete |
+| `graph/node/` | Neo4j `@Node` entities: `SpotNode`, `TagNode`, `CityNode` |
+| `graph/repository/` | `SpotNodeRepository` — custom Cypher `@Query` methods |
+| `graph/service/` | `GraphSyncService` (write, best-effort), `GraphQueryService` (read) |
+| `graph/controller/` | `GraphController` — `/api/graph/*` endpoints |
+| `graph/dto/` | `GraphData` record (nodes + edges) |
+| `parser/` | Two-stage URL parser: Jsoup OG tags → Claude API fallback; `ParseCacheService` wraps Redis |
+| `tag/` | `Tag` entity + `TagRepository` |
+| `config/` | See below |
 
-## Design System (vivid_atlas/DESIGN.md)
+**Config classes and why they exist**:
+- `PasswordConfig` — `PasswordEncoder` bean lives here, **not** in `SecurityConfig`, to break the circular dependency: `SecurityConfig → JwtAuthFilter → AuthService → PasswordEncoder → SecurityConfig`
+- `Neo4jConfig` — explicitly scopes `@EnableJpaRepositories` (auth/spot/tag) and `@EnableNeo4jRepositories` (graph.repository) because both Spring Data modules are on the classpath and would otherwise conflict
+- `CorsConfig` — allows `localhost:3000` with credentials (`withCredentials: true` from frontend)
+- `SecurityConfig` — stateless JWT, permits `/api/auth/**` and `GET /api/public/**`
 
-The UI mockups in `stitch_favorite_spot_knowledge_graph/` implement this design system. When building frontend components, follow these rules:
+**Dual-store invariants**:
+- Neo4j sync is **best-effort**: all exceptions in `GraphSyncService` are caught and logged as WARN, never rethrown — a Neo4j outage must not break CRUD
+- Graph queries are max **2 hops** — enforced in all Cypher
+- `User.isPublic` and `User.createdAt` require `@Builder.Default` — Lombok `@Builder` ignores field initializers without it
 
-**Colors (Tailwind tokens already in mockup HTML):**
-- Primary / Electric Indigo: `#4b3fe2`
-- Surface (canvas): `#f5f6f7` — never use pure white as the base
-- On-Surface text: `#2c2f30` — never use pure black
+**Database**:
+- Flyway migrations: `V1__create_users` → `V2__create_spots` → `V3__create_tags` → `V4__create_spot_sources`
+- `jpa.ddl-auto: validate` — schema changes require new migration files
+- Neo4j indexes created automatically via `spring.data.neo4j.schema-generate: create`
 
-**The "No-Line" Rule:** 1px solid borders are prohibited for sectioning. Use background color shifts between surface tiers instead.
+**API endpoints**:
+```
+POST   /api/auth/register|login|logout
+GET    /api/auth/me
+POST   /api/parse
+GET    /api/spots          ?category=&status=&city=&page=&size=
+POST   /api/spots
+GET|PUT|DELETE /api/spots/{id}
+PATCH  /api/spots/{id}/status
+GET    /api/graph/spot/{id}      # 2-hop graph for one spot
+GET    /api/graph/user           # full collection graph
+GET    /api/graph/related/{id}   # up to 5 ranked related spots
+```
 
-**Typography:**
-- Headlines/Display: **Plus Jakarta Sans** (bold, tight tracking)
-- Body/Labels: **Manrope** (readable at small sizes)
+## Frontend Architecture
 
-**Cards:** `xl` radius (1.5rem/24px), full-bleed imagery, no dividers inside.
+**Next.js 14 App Router** with `output: 'standalone'` (required for Docker multi-stage build).
 
-**Graph Nodes:** `primary` (#4b3fe2) core + 20% opacity `primary_container` (#9895ff) outer glow.
+**Critical**: `NEXT_PUBLIC_*` vars are **build-time baked-in** — pass them as Docker build `args`, not runtime `environment`. See `docker-compose.yml`.
 
-**Buttons:** Pill-shaped (`rounded-full`), primary uses indigo gradient at 135°, scale to 0.96 on tap.
+**Routes**:
+- `(auth)/login` + `(auth)/register` — auth (route group, no shared layout)
+- `feed/` — card wall with category/status filter chips, pagination
+- `spots/new/` — 3-step flow: URL input → parse preview (`ParsePreview.tsx`) → manual fallback
+- `spots/[id]/` — detail: status toggle, 1-5 rating, note edit, related spots, delete
+- `spots/[id]/graph/` — single-spot knowledge graph
+- `graph/` — full collection Knowledge Graph Explorer
 
-**Elevation:** Tonal layering only — no standard drop shadows. Use ambient shadows with 30px+ blur at ≤6% opacity when float is needed.
+**Key type notes** (`lib/types.ts`):
+- `Spot.tags` is `string[]` (tag names), not `Tag[]`
+- `SpotListResponse.number` is the current page index (Spring's `Page<T>` uses `number`, not `page`)
+- `UpdateSpotRequest` is separate from `CreateSpotRequest`
 
-## Key Design Decisions
+**API client** (`lib/api.ts`):
+- Axios with `withCredentials: true`
+- All methods return `.then(r => r.data)` — consumers get typed data directly
+- Exports: `authApi`, `spotsApi`, `graphApi`
 
-- **Redis caches link parse results** to avoid repeated Claude API calls for the same URL
-- **Graph depth limited to 2 hops** in Neo4j queries for performance; add Neo4j indexes on frequently queried properties
-- **Instagram/TikTok anti-scraping**: prioritize parsing Open Graph meta tags; fall back to manual input when scraping fails
-- **Google Maps links**: use Google Places API or follow redirects to extract place data
-- **AI parsing supports multilingual** content (Chinese, Japanese, English) with auto-detection
+**GraphCanvas** (`components/GraphCanvas.tsx`):
+- `use client`, dynamically imported with `ssr: false`
+- Uses plain arrays (not `DataSet`) passed to vis-network `Network` to avoid TypeScript type conflicts
+- Category-color-coded nodes, per-relationship-type edge colors
 
-## Development Phases
+## Design System (Vivid Atlas)
 
-1. Spring Boot init, PostgreSQL + JPA entities, JWT auth, basic CRUD
-2. Jsoup scraping, Claude API integration, Redis caching, multi-platform URL support
-3. Neo4j setup, Spring Data Neo4j, auto-relationship building, Graph API
-4. React frontend (card wall + D3.js/vis.js graph visualization), JUnit + MockMvc tests, Docker Compose
-5. Social features, map mode (Google Maps API), AI recommendations
-6. Chrome Extension (Manifest V3), LINE Bot (LINE Messaging API), i18n (i18next)
+- **No 1px borders** for section separation — use background color shifts between surface tiers
+- **Colors**: Primary `#4b3fe2` (Electric Indigo), Surface `#f5f6f7`, On-Surface `#2c2f30`
+- **Fonts**: `font-headline` = Plus Jakarta Sans; `font-body` / `font-label` = Manrope
+- **Cards**: `rounded-2xl` (1.5rem), full-bleed images, no dividers inside
+- **Buttons**: `rounded-full`, primary = indigo gradient 135°
+- **Graph nodes**: `#4b3fe2` fill, `#9895ff` at 20% opacity outer glow
+
+## Active Specs
+
+| File | Status |
+|------|--------|
+| `specs/001-mvp-core/plan.md` | ✅ Done |
+| `specs/002-knowledge-graph/plan.md` | ✅ Done |
+| `specs/003-map-ai-recommendations/plan.md` | ⬜ Pending |
+| `specs/004-social-features/plan.md` | ⬜ Pending |
+| `specs/005-photos-collections/plan.md` | ⬜ Pending |
+| `specs/006-chrome-linebot-i18n/plan.md` | ⬜ Pending |
+
+Read the relevant `plan.md` before starting any spec implementation.
 
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
-shell commands, and other important information, read the current plan
+shell commands, and other important information, read the current plan.
+
+Active specs (in implementation order):
+- specs/001-mvp-core/plan.md          — Phase 1: Auth + Spot CRUD + Link Parser + Card Feed
+- specs/002-knowledge-graph/plan.md   — Phase 2: Neo4j dual-store + Graph API + vis.js visualization
+- specs/003-map-ai-recommendations/plan.md — Phase 3a: Map View (Google Maps) + AI Recommendations
+- specs/004-social-features/plan.md   — Phase 3b: Follow, Likes, Hot Spots, Public Profiles
+- specs/005-photos-collections/plan.md — Phase 3c: Photo Upload (S3) + Thematic Collections
+- specs/006-chrome-linebot-i18n/plan.md — Phase 4: Chrome Extension + LINE Bot + i18n (zh-TW/en/ja)
 <!-- SPECKIT END -->

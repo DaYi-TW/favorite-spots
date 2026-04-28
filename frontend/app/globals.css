@@ -1,0 +1,179 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Manrope', sans-serif;
+    background-color: #f0f0f0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+}
+
+@layer utilities {
+  /* Pinterest-style masonry */
+  .masonry {
+    columns: 2;
+    column-gap: 12px;
+  }
+
+  @media (min-width: 640px) {
+    .masonry { columns: 3; }
+  }
+
+  @media (min-width: 1024px) {
+    .masonry { columns: 4; }
+  }
+
+  @media (min-width: 1280px) {
+    .masonry { columns: 5; }
+  }
+
+  .masonry-item {
+    break-inside: avoid;
+    margin-bottom: 12px;
+  }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Smooth image hover */
+  .img-hover {
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .group:hover .img-hover {
+    transform: scale(1.06);
+  }
+
+  /* Card glass overlay */
+  .card-overlay {
+    background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.1) 50%, transparent 100%);
+  }
+
+  /* Fade in up — for page sections */
+  .fade-in-up {
+    animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .fade-in-up-delay-1 { animation-delay: 0.06s; }
+  .fade-in-up-delay-2 { animation-delay: 0.12s; }
+  .fade-in-up-delay-3 { animation-delay: 0.18s; }
+  .fade-in-up-delay-4 { animation-delay: 0.24s; }
+  .fade-in-up-delay-5 { animation-delay: 0.30s; }
+
+  /* Shimmer skeleton */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      #e0e3e4 25%,
+      #eef0f1 50%,
+      #e0e3e4 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+  }
+
+  /* Pulse glow — for AI badge */
+  .pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
+  }
+
+  /* Slide up from bottom */
+  .slide-up {
+    animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  /* Scale in */
+  .scale-in {
+    animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  /* Card stagger — for masonry items */
+  .masonry-item {
+    break-inside: avoid;
+    margin-bottom: 12px;
+    animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    background: linear-gradient(135deg, #4b3fe2 0%, #9895ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Primary gradient button bg */
+  .btn-primary-gradient {
+    background: linear-gradient(135deg, #4b3fe2 0%, #6348b1 100%);
+  }
+  .btn-primary-gradient:hover {
+    background: linear-gradient(135deg, #3f2fd6 0%, #573ca4 100%);
+  }
+
+  /* Glass card */
+  .glass {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Dot bounce loader */
+  .dot-bounce {
+    animation: dotBounce 1.2s ease-in-out infinite;
+  }
+  .dot-bounce-2 { animation-delay: 0.2s; }
+  .dot-bounce-3 { animation-delay: 0.4s; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(75, 63, 226, 0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(75, 63, 226, 0); }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes dotBounce {
+  0%, 80%, 100% { transform: translateY(0); }
+  40%           { transform: translateY(-8px); }
+}

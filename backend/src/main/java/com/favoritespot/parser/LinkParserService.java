@@ -27,14 +27,34 @@ public class LinkParserService {
     @Value("${app.anthropic.api-key:dummy}")
     private String anthropicApiKey;
 
-    @Value("${app.anthropic.base-url:https://api.anthropic.com}")
+    @Value("${app.anthropic.base-url:https://aic-claude-eus2.openai.azure.com}")
     private String anthropicBaseUrl;
 
-    @Value("${app.anthropic.model:claude-3-5-haiku-latest}")
-    private String anthropicModel;
+    @Value("${app.anthropic.sonnet-model:claude-sonnet-4-6}")
+    private String sonnetModel;
+
+    @Value("${app.anthropic.opus-model:claude-opus-4-7}")
+    private String opusModel;
 
     private static final int JSOUP_TIMEOUT_MS = 10_000;
     private static final int MAX_PAGE_TEXT_CHARS = 12000;
+
+    private HttpRequest buildAnthropicRequest(String requestJson) {
+        return HttpRequest.newBuilder()
+                .uri(URI.create(anthropicBaseUrl + "/anthropic/v1/messages"))
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + anthropicApiKey)
+                .header("anthropic-version", "2023-06-01")
+                .POST(HttpRequest.BodyPublishers.ofString(requestJson))
+                .build();
+    }
+
+    @SuppressWarnings("unchecked")
+    private String extractTextFromAnthropicResponse(Map<String, Object> responseBody) {
+        List<Map<String, Object>> content = (List<Map<String, Object>>) responseBody.get("content");
+        if (content == null || content.isEmpty()) return "";
+        return (String) content.get(0).getOrDefault("text", "");
+    }
 
     public ParseResult parse(String url) {
         try {
@@ -133,39 +153,19 @@ public class LinkParserService {
                     tagStr);
 
             Map<String, Object> requestBody = Map.of(
-                    "model", anthropicModel,
+                    "model", sonnetModel,
                     "max_tokens", 256,
                     "messages", List.of(Map.of("role", "user", "content", prompt))
             );
 
             String requestJson = objectMapper.writeValueAsString(requestBody);
             HttpClient httpClient = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(anthropicBaseUrl + "/v1/messages"))
-                    .header("Content-Type", "application/json")
-                    .header("x-api-key", anthropicApiKey)
-                    .header("anthropic-version", "2023-06-01")
-                    .POST(HttpRequest.BodyPublishers.ofString(requestJson))
-                    .build();
+            HttpRequest request = buildAnthropicRequest(requestJson);
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             Map<String, Object> responseBody = objectMapper.readValue(response.body(), Map.class);
 
-            String responseText = "";
-            @SuppressWarnings("unchecked")
-            List<Map<String, Object>> choices = (List<Map<String, Object>>) responseBody.get("choices");
-            if (choices != null && !choices.isEmpty()) {
-                @SuppressWarnings("unchecked")
-                Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
-                if (message != null) responseText = (String) message.getOrDefault("content", "");
-            }
-            if (responseText.isBlank()) {
-                @SuppressWarnings("unchecked")
-                List<Map<String, Object>> content = (List<Map<String, Object>>) responseBody.get("content");
-                if (content != null && !content.isEmpty()) {
-                    responseText = (String) content.get(0).getOrDefault("text", "");
-                }
-            }
+            String responseText = extractTextFromAnthropicResponse(responseBody);
             return responseText.trim().isBlank() ? null : responseText.trim();
 
         } catch (Exception e) {
@@ -177,7 +177,7 @@ public class LinkParserService {
     @SuppressWarnings("unchecked")
     private ParseResult enrichWithClaudeApi(String url, Document doc, String jsoupName, String jsoupAddress, String imageUrl, String canonicalUrl) {
         if (anthropicApiKey == null || anthropicApiKey.isBlank() || anthropicApiKey.equals("dummy")) {
-            log.warn("Anthropic API key not configured, falling back to Jsoup-only result for url={}", url);
+            log.warn("Azure Foundry API key not configured, falling back to Jsoup-only result for url={}", url);
             SpotCategory category = guessCategory(jsoupName, null);
             return ParseResult.builder()
                     .name(jsoupName)
@@ -231,7 +231,7 @@ public class LinkParserService {
                     pageText);
 
             Map<String, Object> requestBody = Map.of(
-                    "model", anthropicModel,
+                    "model", sonnetModel,
                     "max_tokens", 8192,
                     "messages", List.of(Map.of("role", "user", "content", userPrompt))
             );
@@ -239,33 +239,14 @@ public class LinkParserService {
             String requestJson = objectMapper.writeValueAsString(requestBody);
 
             HttpClient httpClient = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(anthropicBaseUrl + "/v1/messages"))
-                    .header("Content-Type", "application/json")
-                    .header("x-api-key", anthropicApiKey)
-                    .header("anthropic-version", "2023-06-01")
-                    .POST(HttpRequest.BodyPublishers.ofString(requestJson))
-                    .build();
+            HttpRequest request = buildAnthropicRequest(requestJson);
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            log.info("Claude API response status={} for url={}", response.statusCode(), url);
+            log.info("Azure Foundry API response status={} for url={}", response.statusCode(), url);
 
             Map<String, Object> responseBody = objectMapper.readValue(response.body(), Map.class);
 
-            String responseText = "";
-            List<Map<String, Object>> choices = (List<Map<String, Object>>) responseBody.get("choices");
-            if (choices != null && !choices.isEmpty()) {
-                Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
-                if (message != null) {
-                    responseText = (String) message.getOrDefault("content", "{}");
-                }
-            }
-            if (responseText.isBlank()) {
-                List<Map<String, Object>> content = (List<Map<String, Object>>) responseBody.get("content");
-                if (content != null && !content.isEmpty()) {
-                    responseText = (String) content.get(0).getOrDefault("text", "{}");
-                }
-            }
+            String responseText = extractTextFromAnthropicResponse(responseBody);
 
             responseText = responseText.trim();
             if (responseText.startsWith("```")) {
@@ -296,7 +277,7 @@ public class LinkParserService {
                         .address(sAddress)
                         .city(sCity)
                         .category(sCat)
-                        .coverImageUrl(sCoverImageUrl)
+                        .coverImageUrl(sCoverImageUrl != null ? sCoverImageUrl : imageUrl)
                         .description(sDescription)
                         .suggestedTags(sTags)
                         .build();
@@ -304,7 +285,7 @@ public class LinkParserService {
 
             // First spot becomes the top-level fields for backward compatibility
             ParseResult.SpotParseItem first = spotItems.get(0);
-            String firstCover = (first.getCoverImageUrl() != null) ? first.getCoverImageUrl() : imageUrl;
+            String firstCover = first.getCoverImageUrl() != null ? first.getCoverImageUrl() : imageUrl;
 
             return ParseResult.builder()
                     .name(first.getName())
